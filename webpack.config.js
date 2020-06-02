@@ -14,12 +14,20 @@ const config = {
     new WebpackPwaManifest({
       fingerprints: false,
       inject: false,
-      name: "Images App",
-      short_name: "Images App",
-      description: "An application for images",
-      background_color: "#01579b",
+      name: "Budgeting App",
+      short_name: "Budget App",
+      description: "An application to keep track of your expenses, on or offline!",
+      background_color: "#eedff5",
       theme_color: "#ffffff",
       start_url: "/",
+      icons: [{
+        src: "./public/icons/icon-192x192.png",
+        sizes: "192x192"
+    }, {
+        src: "./public/icons/icon-512x512.png",
+        sizes: "512x512"
+    }
+],
     }),
     
   ],

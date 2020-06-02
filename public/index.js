@@ -66,14 +66,14 @@ function populateChart() {
 
   myChart = new Chart(ctx, {
     type: 'line',
-      data: {
-        labels,
-        datasets: [{
-            label: "Total Over Time",
-            fill: true,
-            backgroundColor: "#6666ff",
-            data
-        }]
+    data: {
+      labels,
+      datasets: [{
+        label: "Total Over Time",
+        fill: true,
+        backgroundColor: "#6666ff",
+        data
+      }]
     }
   });
 }
@@ -112,10 +112,6 @@ function sendTransaction(isAdding) {
   populateTable();
   populateTotal();
 
-  function saveRecord(tr) {
-    // Save the record
-  }
-  
   // also send to server
   fetch("/api/transaction", {
     method: "POST",
@@ -125,33 +121,51 @@ function sendTransaction(isAdding) {
       "Content-Type": "application/json"
     }
   })
-  .then(response => {    
-    return response.json();
-  })
-  .then(data => {
-    if (data.errors) {
-      errorEl.textContent = "Missing Information";
-    }
-    else {
+    .then(response => response.json())
+    .then(data => {
+      if (data.errors) {
+        errorEl.textContent = "Missing Information";
+      }
+      else {
+        // clear form
+        nameEl.value = "";
+        amountEl.value = "";
+      }
+    })
+    .catch(err => {
+      // fetch failed, so save in indexed db
+      saveRecord(transaction);
+
       // clear form
       nameEl.value = "";
       amountEl.value = "";
-    }
-  })
-  .catch(err => {
-    // fetch failed, so save in indexed db
-    saveRecord(transaction);
+    });
+}
 
-    // clear form
-    nameEl.value = "";
-    amountEl.value = "";
+function loadPage() {
+  useIndexedDb("transactions", "budget", "get").then(results => {
+    loadArticles().then(data => {
+      const mappedData = data.map(article => {
+        transactions.forEach(fav => {
+          if (transactions._id === fav._id) {
+            transactions.favorite = true;
+          }
+        });
+        return article;
+      });
+      renderArticles(mappedData, loadPage);
+    });
   });
 }
 
-document.querySelector("#add-btn").onclick = function() {
+loadPage();
+
+document.querySelector("#add-btn").onclick = function () {
+  event.preventDefault();
   sendTransaction(true);
 };
 
-document.querySelector("#sub-btn").onclick = function() {
+document.querySelector("#sub-btn").onclick = function () {
+  event.preventDefault();
   sendTransaction(false);
 };

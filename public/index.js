@@ -142,24 +142,6 @@ function sendTransaction(isAdding) {
     });
 }
 
-function loadPage() {
-  useIndexedDb("transactions", "budget", "get").then(results => {
-    loadArticles().then(data => {
-      const mappedData = data.map(article => {
-        transactions.forEach(fav => {
-          if (transactions._id === fav._id) {
-            transactions.favorite = true;
-          }
-        });
-        return article;
-      });
-      renderArticles(mappedData, loadPage);
-    });
-  });
-}
-
-loadPage();
-
 document.querySelector("#add-btn").onclick = function () {
   event.preventDefault();
   sendTransaction(true);
